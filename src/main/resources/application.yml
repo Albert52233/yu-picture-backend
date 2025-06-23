@@ -1,6 +1,6 @@
 server:
-  port: 8081
-  server:
+  port: 8123
+  servlet:
     context-path: /api
 
 spring:
@@ -8,7 +8,7 @@ spring:
     name: yu-picture-backend
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/yu_picture
+    url: jdbc:mysql://localhost:3306/yu_picture
     username: root
     password: az3040573123
   mybatis-plus:
@@ -23,4 +23,14 @@ spring:
         logic-delete-field: isDelete
         logic-delete-value: 1
         logic-not-delete-value: 0
-
+#接口文档
+knife4j:
+  enable: true
+  openapi:
+    title: 接口文档
+    group:
+      default:
+        group-name: 默认分组
+        api-rule: package
+        api-rule-resources:
+          - com.yupi.yupicturebackend.controller
