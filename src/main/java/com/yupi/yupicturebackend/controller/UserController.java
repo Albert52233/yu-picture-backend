@@ -1,13 +1,16 @@
 package com.yupi.yupicturebackend.controller;
 
 
+import com.yupi.yupicturebackend.annotation.AuthCheck;
 import com.yupi.yupicturebackend.common.BaseResponse;
 import com.yupi.yupicturebackend.common.ResultUtils;
+import com.yupi.yupicturebackend.constant.UserConstant;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import com.yupi.yupicturebackend.exception.ThrowUtils;
 import com.yupi.yupicturebackend.model.dto.UserLoginRequest;
 import com.yupi.yupicturebackend.model.dto.UserRegisterRequest;
 import com.yupi.yupicturebackend.model.entity.LoginUserVO;
+import com.yupi.yupicturebackend.model.entity.User;
 import com.yupi.yupicturebackend.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,8 @@ public class UserController {
      * health verification
      */
     @PostMapping ("/register")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE  )
+
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         ThrowUtils.throwIf(userRegisterRequest == null, ErrorCode.PARAMS_ERROR);
         String userAccount = userRegisterRequest.getUserAccount();
@@ -42,5 +47,18 @@ public class UserController {
         String userPassword = userLoginRequest.getUserPassword();
         LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(loginUserVO);
+    }
+
+    @GetMapping("/get/login")
+    public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        return ResultUtils.success(userService.getLoginUserVO(loginUser));
+    }
+
+    @PostMapping("/logout")
+    public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
+        ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
+        userService.userLogout(request);
+        return ResultUtils.success(true);
     }
 }

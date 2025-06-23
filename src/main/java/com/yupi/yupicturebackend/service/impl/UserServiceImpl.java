@@ -109,6 +109,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    public User getLoginUser(HttpServletRequest request) {
+        // check if logged in
+        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        User currentUser = (User) userObj;
+        if (userObj != null  || currentUser.getId() == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        long userId = currentUser.getId();
+        currentUser = this.getById(userId);
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        return currentUser;
+    }
+
+    @Override
     public LoginUserVO getLoginUserVO(User user) {
         if (user == null) {
             return null;
@@ -116,6 +132,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtil.copyProperties(user, loginUserVO);
         return loginUserVO;
+    }
+
+    @Override
+    public boolean userLogout(HttpServletRequest request) {
+        //check if logged in
+        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        if (userObj == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"not logged in");
+        }
+        request.getSession().removeAttribute(UserConstant.USER_LOGIN_STATE);
+        return true;
     }
 }
 

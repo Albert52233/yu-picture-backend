@@ -37,5 +37,23 @@ public interface UserService extends IService<User> {
      */
     LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
 
+
+
+    /**
+     * get current user info
+     * @param request
+     * @return
+     */
+    User getLoginUser(HttpServletRequest request);
+
     LoginUserVO getLoginUserVO(User user);
+
+    /**
+     * user logout // 和用户账户注销有区别
+     *
+     * @param request
+     * @return
+     */
+    boolean userLogout(HttpServletRequest request);
+
 }
