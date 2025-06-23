@@ -3,7 +3,7 @@ package com.yupi.yupicturebackend.exception;
 import lombok.Getter;
 
 /**
- * self define business expections
+ * self define business exceptions
  */
 @Getter
 public class BusinessException extends RuntimeException {

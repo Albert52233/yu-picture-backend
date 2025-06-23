@@ -23,9 +23,9 @@ public class GlobalExceptionHandler {
         return ResultUtils.error(e.getCode(), e.getMessage() );
     }
 
-    @ExceptionHandler(BusinessException.class )
+    @ExceptionHandler(RuntimeException.class )
     public BaseResponse<?> businessExceptionHandler(RuntimeException e) {
         log.error ("BusinessException", e);
-        return ResultUtils.error(ErrorCode.SYSTEM_ERROR ,e.getMessage() );
+        return ResultUtils.error(ErrorCode.SYSTEM_ERROR ,"System Error");
     }
 }

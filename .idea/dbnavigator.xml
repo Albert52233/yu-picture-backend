@@ -6,7 +6,7 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
@@ -14,17 +14,20 @@
       <assistant-state connection-id="652572f5-42a6-4fb8-9310-3d4eb03d165e" default-profile-name="" selected-profile-name="" selected-model-name="" assistant-type="GENERIC" selected-action="SHOW_SQL" availability="UNAVAILABLE" acknowledgement="NONE">
         <messages />
       </assistant-state>
+      <assistant-state connection-id="222a65c6-1b96-4f25-b49f-b32333a49976" default-profile-name="" selected-profile-name="" selected-model-name="" assistant-type="GENERIC" selected-action="SHOW_SQL" availability="UNAVAILABLE" acknowledgement="NONE">
+        <messages />
+      </assistant-state>
     </assistants>
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
-    <show-object-properties value="true" />
+    <show-object-properties value="false" />
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="652572f5-42a6-4fb8-9310-3d4eb03d165e">
-      <console name="Yudao" type="STANDARD" schema="mysql" session="Main" />
+    <connection id="222a65c6-1b96-4f25-b49f-b32333a49976">
+      <console name="yu_picture" type="STANDARD" schema="mysql" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -34,17 +37,40 @@
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="652572f5-42a6-4fb8-9310-3d4eb03d165e" />
+    <connection id="222a65c6-1b96-4f25-b49f-b32333a49976" />
+  </component>
+  <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="222a65c6-1b96-4f25-b49f-b32333a49976" dataset="yu_picture.user" active-filter-id="5ef495b2-5305-4d0a-9590-2e0dbeee6778">
+      <filter id="5ef495b2-5305-4d0a-9590-2e0dbeee6778" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="=" value="" active="true" />
+      </filter>
+    </filter-actions>
+  </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
+  </component>
+  <component name="DBNavigator.Project.MethodExecutionManager">
+    <method-browser />
+    <execution-history>
+      <group-entries value="true" />
+      <execution-inputs />
+    </execution-history>
+    <execution-variables-cache />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />
   </component>
+  <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
+    <recently-used-interfaces>
+      <mapping database-type="MYSQL" interface-id="DEFAULT" />
+    </recently-used-interfaces>
+  </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="652572f5-42a6-4fb8-9310-3d4eb03d165e" active="true" signed="true">
+      <connection id="222a65c6-1b96-4f25-b49f-b32333a49976" active="true" signed="true">
         <database>
-          <name value="Yudao" />
+          <name value="yu_picture" />
           <description value="" />
           <database-type value="MYSQL" />
           <config-type value="BASIC" />
@@ -53,9 +79,9 @@
           <driver-library value="" />
           <driver value="" />
           <url-type value="DATABASE" />
-          <host value="127.0.0.1" />
+          <host value="localhost" />
           <port value="3306" />
-          <database value="mysql" />
+          <database value="yu_picture" />
           <tns-folder value="" />
           <tns-profile value="" />
           <type value="USER_PASSWORD" />
@@ -556,5 +582,9 @@
         </visibility-settings>
       </environment>
     </general-settings>
+  </component>
+  <component name="DBNavigator.Project.StatementExecutionManager">
+    <execution-variables />
+    <execution-variable-types />
   </component>
 </project>
