@@ -1,4 +1,4 @@
-create database if not exist yu_picture;
+create database if not exists yu_picture;
 
 use yu_picture;
 -- 用户表
@@ -18,3 +18,4 @@ create table if not exists user
     UNIQUE KEY uk_userAccount (userAccount),
     INDEX idx_userName (userName)
 ) comment '用户' collate = utf8mb4_unicode_ci;
+

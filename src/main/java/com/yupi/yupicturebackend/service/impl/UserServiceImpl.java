@@ -1,0 +1,126 @@
+package com.yupi.yupicturebackend.service.impl;
+
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yupi.yupicturebackend.constant.UserConstant;
+import com.yupi.yupicturebackend.exception.BusinessException;
+import com.yupi.yupicturebackend.exception.ErrorCode;
+import com.yupi.yupicturebackend.model.entity.LoginUserVO;
+import com.yupi.yupicturebackend.model.entity.User;
+import com.yupi.yupicturebackend.model.enums.UserRoleEnum;
+import com.yupi.yupicturebackend.service.UserService;
+import com.yupi.yupicturebackend.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+* @author albertzhang
+* @description 针对表【user(用户表)】的数据库操作Service实现
+* @createDate 2025-06-23 14:15:03
+*/
+@Slf4j
+@Service
+public class UserServiceImpl extends ServiceImpl<UserMapper, User>
+    implements UserService {
+
+    /**
+     * user register
+     * @param userAccount
+     * @param userPassword
+     * @param checkPassword
+     * @return
+     */
+    @Override
+    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+        // 1. 校验参数Add commentMore actions
+        if (StrUtil.hasBlank(userAccount, userPassword, checkPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "empty entrance");
+        }
+        if (userAccount.length() < 4) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "user account too short");
+        }
+        if (userPassword.length() < 8 || checkPassword.length() < 8) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "user password too short");
+        }
+        if (!userPassword.equals(checkPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "passwords not same");
+        }
+        // 2. 检查用户账号是否和数据库中已有的重复Add commentMore actions
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userAccount", userAccount);
+        long count = this.baseMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
+        }
+        // 3. 密码一定要加密Add commentMore actions
+        String encryptPassword = getEncryptPassword(userPassword);
+        // 4. 插入数据到数据库中
+        User user = new User();
+        user.setUserAccount(userAccount);
+        user.setUserPassword(encryptPassword);
+        user.setUserName("momo");
+        user.setUserRole(UserRoleEnum.USER.getValue());
+        boolean saveResult = this.save(user);
+        if (!saveResult) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "register failed");
+        }
+        return user.getId();
+    }
+
+
+    @Override
+    public String getEncryptPassword(String userPassword) {
+        final String SALT= "xiangyun";
+        return DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+    }
+
+    @Override
+    public LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request) {
+        // 1. 校验
+        if (StrUtil.hasBlank(userAccount, userPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "null param");
+        }
+        if (userAccount.length() < 4) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "user account error");
+        }
+        if (userPassword.length() < 8) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "user password error");
+        }
+        // 2. 对用户传递的密码进行加密
+        String encryptPassword = getEncryptPassword(userPassword);
+        // 3. 查询数据库中的用户是否存在
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userAccount", userAccount);
+        queryWrapper.eq("userPassword", encryptPassword);
+        User user = this.baseMapper.selectOne(queryWrapper);
+        // 不存在，抛异常
+        if (user == null) {
+            log.info("user login failed, userAccount cannot match userPassword");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "account does not exist or wrong password");
+        }
+        // 4. 保存用户的登录态
+        request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, user);
+        return this.getLoginUserVO(user);
+    }
+
+    @Override
+    public LoginUserVO getLoginUserVO(User user) {
+        if (user == null) {
+            return null;
+        }
+        LoginUserVO loginUserVO = new LoginUserVO();
+        BeanUtil.copyProperties(user, loginUserVO);
+        return loginUserVO;
+    }
+}
+
+
+
+
+
+
