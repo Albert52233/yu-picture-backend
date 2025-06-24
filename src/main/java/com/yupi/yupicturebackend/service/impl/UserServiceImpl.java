@@ -1,15 +1,19 @@
 package com.yupi.yupicturebackend.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yupi.yupicturebackend.constant.UserConstant;
 import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
+import com.yupi.yupicturebackend.model.dto.user.UserQueryRequest;
 import com.yupi.yupicturebackend.model.entity.LoginUserVO;
 import com.yupi.yupicturebackend.model.entity.User;
 import com.yupi.yupicturebackend.model.enums.UserRoleEnum;
+import com.yupi.yupicturebackend.model.vo.UserVO;
 import com.yupi.yupicturebackend.service.UserService;
 import com.yupi.yupicturebackend.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * @author albertzhang
@@ -113,7 +120,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // check if logged in
         Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
         User currentUser = (User) userObj;
-        if (userObj != null  || currentUser.getId() == null) {
+        if (userObj == null  || currentUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         long userId = currentUser.getId();
@@ -135,6 +142,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    public UserVO getUserVO(User user) {
+        if (user == null) {
+            return null;
+        }
+        UserVO userVO = new UserVO();
+        BeanUtil.copyProperties(user, userVO);
+        return userVO;
+    }
+
+
+    @Override
+    public List<UserVO> getUserVOList(List<User> userList) {
+        if (CollUtil.isEmpty(userList)) {
+            return new ArrayList<>();
+        }
+        return userList.stream()
+                .map(this::getUserVO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean userLogout(HttpServletRequest request) {
         //check if logged in
         Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
@@ -144,9 +172,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         request.getSession().removeAttribute(UserConstant.USER_LOGIN_STATE);
         return true;
     }
+
+    @Override
+    public QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
+        if (userQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
+        }
+        Long id = userQueryRequest.getId();
+        String userName = userQueryRequest.getUserName();
+        String userAccount = userQueryRequest.getUserAccount();
+        String userProfile = userQueryRequest.getUserProfile();
+        String userRole = userQueryRequest.getUserRole();
+        String sortField = userQueryRequest.getSortField();
+        String sortOrder = userQueryRequest.getSortOrder();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(ObjUtil.isNotNull(id), "id", id);
+        queryWrapper.eq(StrUtil.isNotBlank(userRole), "userRole", userRole);
+        queryWrapper.like(StrUtil.isNotBlank(userAccount), "userAccount", userAccount);
+        queryWrapper.like(StrUtil.isNotBlank(userName), "userName", userName);
+        queryWrapper.like(StrUtil.isNotBlank(userProfile), "userProfile", userProfile);
+        queryWrapper.orderBy(StrUtil.isNotEmpty(sortField), sortOrder.equals("ascend"), sortField);
+        return queryWrapper;
+    }
 }
-
-
 
 
 
