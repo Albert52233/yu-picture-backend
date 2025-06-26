@@ -18,6 +18,8 @@ import com.yupi.yupicturebackend.model.vo.UserVO;
 import com.yupi.yupicturebackend.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.http.HttpUtil;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
